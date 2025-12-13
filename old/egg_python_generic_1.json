@@ -1,0 +1,128 @@
+{
+    "_comment": "DO NOT EDIT: FILE GENERATED AUTOMATICALLY BY PTERODACTYL PANEL - PTERODACTYL.IO",
+    "meta": {
+        "version": "PTDL_v2",
+        "update_url": null
+    },
+    "exported_at": "2025-12-13T17:56:06+01:00",
+    "name": "python generique",
+    "author": "unknown@unknown.com",
+    "description": "Un egg Python generique pour Pterodactyl\r\n\r\nTest\u00e9 avec : https:\/\/github.com\/Ispira\/pixel-bot",
+    "features": null,
+    "docker_images": {
+        "Python 3.12": "ghcr.io\/parkervcp\/yolks:python_3.12",
+        "Python 3.11": "ghcr.io\/parkervcp\/yolks:python_3.11",
+        "Python 3.10": "ghcr.io\/parkervcp\/yolks:python_3.10",
+        "Python 3.9": "ghcr.io\/parkervcp\/yolks:python_3.9",
+        "Python 3.8": "ghcr.io\/parkervcp\/yolks:python_3.8",
+        "Python 3.7": "ghcr.io\/parkervcp\/yolks:python_3.7",
+        "Python 2.7": "ghcr.io\/parkervcp\/yolks:python_2.7"
+    },
+    "file_denylist": [],
+    "startup": "if [[ -d .git ]] && [[ \"{{AUTO_UPDATE}}\" == \"1\" ]]; then git pull; fi; if [[ ! -z \"{{PY_PACKAGES}}\" ]]; then pip install -U --prefix .local {{PY_PACKAGES}}; fi; if [[ -f \/home\/container\/${REQUIREMENTS_FILE} ]]; then pip install -U --prefix .local -r ${REQUIREMENTS_FILE}; fi; \/usr\/local\/bin\/python \/home\/container\/{{PY_FILE}}",
+    "config": {
+        "files": "{}",
+        "startup": "{\r\n    \"done\": \"connected to Gateway\"\r\n}",
+        "logs": "{}",
+        "stop": "^C"
+    },
+    "scripts": {
+        "installation": {
+            "script": "#!\/bin\/bash\r\n# Script d'installation d'application Python\r\n#\r\n# Fichiers du serveur : \/mnt\/server\r\napt update\r\napt install -y git curl jq file unzip make gcc g++ libtool\r\n\r\nmkdir -p \/mnt\/server\r\ncd \/mnt\/server\r\n\r\nif [ \"${USER_UPLOAD}\" == \"true\" ] || [ \"${USER_UPLOAD}\" == \"1\" ]; then\r\n    echo -e \"l'utilisateur est cens\u00e9 savoir ce qu'il fait, bonne journ\u00e9e.\"\r\n    exit 0\r\nfi\r\n\r\n## ajouter .git si ce n'est pas d\u00e9j\u00e0 dans l'adresse\r\nif [[ ${GIT_ADDRESS} != *.git ]]; then\r\n    GIT_ADDRESS=${GIT_ADDRESS}.git\r\nfi\r\n\r\nif [ -z \"${USERNAME}\" ] && [ -z \"${ACCESS_TOKEN}\" ]; then\r\n    echo -e \"utilisation de l'appel API anonyme\"\r\nelse\r\n    GIT_ADDRESS=\"https:\/\/${USERNAME}:${ACCESS_TOKEN}@$(echo -e ${GIT_ADDRESS} | cut -d\/ -f3-)\"\r\nfi\r\n\r\n## pull du repo git python\r\nif [ \"$(ls -A \/mnt\/server)\" ]; then\r\n    echo -e \"Le r\u00e9pertoire \/mnt\/server n'est pas vide.\"\r\n    if [ -d .git ]; then\r\n        echo -e \"Le r\u00e9pertoire .git existe\"\r\n        if [ -f .git\/config ]; then\r\n            echo -e \"chargement des informations depuis git config\"\r\n            ORIGIN=$(git config --get remote.origin.url)\r\n        else\r\n            echo -e \"fichiers trouv\u00e9s sans git config\"\r\n            echo -e \"fermeture sans rien toucher pour ne rien casser\"\r\n            exit 10\r\n        fi\r\n    fi\r\n\r\n    if [ \"${ORIGIN}\" == \"${GIT_ADDRESS}\" ]; then\r\n        echo \"t\u00e9l\u00e9chargement des derni\u00e8res modifications depuis github\"\r\n        git pull\r\n    fi\r\nelse\r\n    echo -e \"\/mnt\/server est vide.\\nclonage des fichiers dans le repo\"\r\n    if [ -z ${BRANCH} ]; then\r\n        echo -e \"clonage de la branche par d\u00e9faut\"\r\n        git clone ${GIT_ADDRESS} .\r\n    else\r\n        echo -e \"clonage de ${BRANCH}'\"\r\n        git clone --single-branch --branch ${BRANCH} ${GIT_ADDRESS} .\r\n    fi\r\n\r\nfi\r\n\r\nexport HOME=\/mnt\/server\r\n\r\necho \"Installation des d\u00e9pendances python dans le dossier\"\r\nif [[ ! -z ${PY_PACKAGES} ]]; then\r\n    pip install -U --prefix .local ${PY_PACKAGES}\r\nfi\r\n\r\nif [ -f \/mnt\/server\/requirements.txt ]; then\r\n    pip install -U --prefix .local -r ${REQUIREMENTS_FILE}\r\nfi\r\n\r\necho -e \"installation termin\u00e9e\"\r\nexit 0",
+            "container": "python:3.8-slim-bookworm",
+            "entrypoint": "bash"
+        }
+    },
+    "variables": [
+        {
+            "name": "Adresse du d\u00e9p\u00f4t Git",
+            "description": "D\u00e9p\u00f4t Git \u00e0 cloner\r\n\r\nEx: https:\/\/github.com\/parkervcp\/nom_du_d\u00e9p\u00f4t",
+            "env_variable": "GIT_ADDRESS",
+            "default_value": "",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "nullable|string",
+            "field_type": "text"
+        },
+        {
+            "name": "Branche Git",
+            "description": "Branche \u00e0 r\u00e9cup\u00e9rer depuis GitHub.\r\n\r\nLa valeur par d\u00e9faut est vide pour r\u00e9cup\u00e9rer la branche par d\u00e9faut du d\u00e9p\u00f4t",
+            "env_variable": "BRANCH",
+            "default_value": "",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "nullable|string",
+            "field_type": "text"
+        },
+        {
+            "name": "Fichiers t\u00e9l\u00e9charg\u00e9s par l'utilisateur",
+            "description": "Ignorer toutes les \u00e9tapes d'installation si vous laissez un utilisateur t\u00e9l\u00e9charger des fichiers.\r\n\r\n0 = faux (par d\u00e9faut)\r\n1 = vrai",
+            "env_variable": "USER_UPLOAD",
+            "default_value": "0",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|boolean",
+            "field_type": "text"
+        },
+        {
+            "name": "Mise \u00e0 jour automatique",
+            "description": "R\u00e9cup\u00e9rer les derniers fichiers au d\u00e9marrage lors de l'utilisation d'un d\u00e9p\u00f4t GitHub.",
+            "env_variable": "AUTO_UPDATE",
+            "default_value": "0",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|boolean",
+            "field_type": "text"
+        },
+        {
+            "name": "Fichier .py de l'application",
+            "description": "Le fichier qui d\u00e9marre l'application.",
+            "env_variable": "PY_FILE",
+            "default_value": "main.py",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|string",
+            "field_type": "text"
+        },
+        {
+            "name": "Packages Python suppl\u00e9mentaires",
+            "description": "Installer des packages Python suppl\u00e9mentaires.\r\n\r\nUtilisez des espaces pour s\u00e9parer",
+            "env_variable": "PY_PACKAGES",
+            "default_value": "",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "nullable|string",
+            "field_type": "text"
+        },
+        {
+            "name": "Nom d'utilisateur Git",
+            "description": "Nom d'utilisateur pour l'authentification avec Git.",
+            "env_variable": "USERNAME",
+            "default_value": "",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "nullable|string",
+            "field_type": "text"
+        },
+        {
+            "name": "Jeton d'acc\u00e8s Git",
+            "description": "Mot de passe \u00e0 utiliser avec Git.\r\n\r\nIl est recommand\u00e9 d'utiliser un jeton d'acc\u00e8s personnel.\r\nhttps:\/\/github.com\/settings\/tokens\r\nhttps:\/\/gitlab.com\/-\/profile\/personal_access_tokens",
+            "env_variable": "ACCESS_TOKEN",
+            "default_value": "",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "nullable|string",
+            "field_type": "text"
+        },
+        {
+            "name": "Fichier de d\u00e9pendances (requirements)",
+            "description": "S'il y a d'autres fichiers de d\u00e9pendances \u00e0 choisir.",
+            "env_variable": "REQUIREMENTS_FILE",
+            "default_value": "requirements.txt",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|string",
+            "field_type": "text"
+        }
+    ]
+}
