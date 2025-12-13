@@ -7,7 +7,7 @@
     "exported_at": "2025-12-13T17:56:06+01:00",
     "name": "python generique",
     "author": "unknown@unknown.com",
-    "description": "Un \u0153uf Python generique pour Pterodactyl\r\n\r\nTest\u00e9 avec : https:\/\/github.com\/Ispira\/pixel-bot",
+    "description": "Un egg Python generique pour Pterodactyl\r\n\r\nTest\u00e9 avec : https:\/\/github.com\/Ispira\/pixel-bot",
     "features": null,
     "docker_images": {
         "Python 3.12": "ghcr.io\/parkervcp\/yolks:python_3.12",
