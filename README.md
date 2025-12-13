@@ -52,6 +52,6 @@ Voici les variables disponibles pour configurer votre serveur :
 
 ## Auteur
 
-@Xougui
-Mail: xougui.7@gmail.com
-Discord: @xougui
+*   **GitHub:** @Xougui  
+*   **Mail:** xougui.7@gmail.com  
+*   **Discord:** @xougui 
