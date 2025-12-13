@@ -1,4 +1,4 @@
-# Egg Pterodactyl - Python Générique (Robust)
+# Egg Pterodactyl - Python Générique
 
 Cet egg Pterodactyl permet d'héberger facilement des applications Python génériques. Il est conçu pour être robuste, sécurisé et flexible.
 
@@ -55,5 +55,3 @@ Voici les variables disponibles pour configurer votre serveur :
 *   **GitHub:** @Xougui  
 *   **Mail:** xougui.7@gmail.com  
 *   **Discord:** @xougui 
-
-test
