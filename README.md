@@ -52,4 +52,4 @@ Voici les variables disponibles pour configurer votre serveur :
 
 ## Auteur
 
-xougui.7 [at] gmail.com
+xougui.7@gmail.com
