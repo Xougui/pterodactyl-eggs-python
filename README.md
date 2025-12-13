@@ -17,7 +17,7 @@ Cet egg Pterodactyl permet d'héberger facilement des applications Python géné
 
 ## Images Docker Supportées
 
-L'egg utilise les images `ghcr.io/pelican-eggs/yolks` :
+L'egg utilise les images [`ghcr.io/pelican-eggs/yolks`](https://github.com/pelican-eggs/yolks/pkgs/container/yolks) :
 
 *   Python 3.14
 *   Python 3.13
@@ -49,6 +49,19 @@ Voici les variables disponibles pour configurer votre serveur :
 2.  Dans votre panel Pterodactyl, allez dans **Nests** -> **Import Egg**.
 3.  Sélectionnez le fichier JSON et le Nest approprié.
 4.  Créez un nouveau serveur en utilisant cet egg.
+
+## Tests
+
+Il n'existe pas de commande de test automatisée pour cet egg. Le processus de test est manuel et consiste à vérifier que l'egg fonctionne comme prévu dans un environnement Pterodactyl.
+
+Voici les étapes recommandées pour tester l'egg :
+
+1.  **Importer l'egg** : Suivez les instructions d'installation pour importer le fichier `egg_python_generic_3.json` dans votre panel Pterodactyl.
+2.  **Créer un serveur** : Créez un nouveau serveur en utilisant cet egg. Configurez les variables du serveur selon vos besoins (par exemple, en fournissant un dépôt Git de test).
+3.  **Vérifier l'installation** : Démarrez le serveur et suivez les journaux de la console pour vous assurer que l'installation se déroule sans erreur. Vérifiez que le dépôt Git est cloné et que les dépendances Python sont installées correctement.
+4.  **Valider la fonctionnalité** : Assurez-vous que votre application Python démarre et fonctionne comme prévu. Testez les différentes fonctionnalités de l'egg, comme la mise à jour automatique.
+
+Ce processus de test manuel garantit que l'egg est compatible avec votre environnement et que la configuration de votre serveur est correcte.
 
 ## Auteur
 
