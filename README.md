@@ -45,11 +45,11 @@ Voici les variables disponibles pour configurer votre serveur :
 
 ## Installation
 
-1.  Téléchargez le fichier `egg_python_generic_3.json`.
+1.  Téléchargez le fichier `egg_python_generic_3.json` depuis ce dépot.
 2.  Dans votre panel Pterodactyl, allez dans **Nests** -> **Import Egg**.
 3.  Sélectionnez le fichier JSON et le Nest approprié.
 4.  Créez un nouveau serveur en utilisant cet egg.
 
 ## Auteur
 
-xougui.7@gmail.com
+xougui.7 [at] gmail.com
