@@ -109,7 +109,7 @@
             "description": "Token d'accès personnel (PAT).",
             "env_variable": "ACCESS_TOKEN",
             "default_value": "",
-            "user_viewable": false,
+            "user_viewable": true,
             "user_editable": true,
             "rules": "nullable|string",
             "field_type": "text"
