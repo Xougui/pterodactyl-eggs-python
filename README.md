@@ -45,14 +45,16 @@ Voici les variables disponibles pour configurer votre serveur :
 | **Jeton d'accès Git** (`ACCESS_TOKEN`) | Personal Access Token (PAT) pour les dépôts privés. | (Vide) |
 | **Fichier requirements** (`REQUIREMENTS_FILE`) | Nom du fichier listant les dépendances. | `requirements.txt` |
 
-> [!TIP]
-> **Sécurité :** Le Jeton d'accès Git (`ACCESS_TOKEN`) est visible par les utilisateurs ayant accès aux variables du serveur. Utilisez un token avec des droits limités (Scope: Read Only).
+
 
 > [!IMPORTANT]
 > **Attention :** Le token Git est stocké dans la configuration locale du dépôt. Ne donnez pas d'accès SFTP à des tiers non de confiance.
 
+> [!TIP]
+> **Sécurité :** Le Jeton d'accès Git (`ACCESS_TOKEN`) est visible par les utilisateurs ayant accès aux variables du serveur. Utilisez un token avec des droits limités (Scope: Read Only).
+
 > [!NOTE]
-> **Note :** Pensez à adapter la configuration de démarrage (Startup Configuration) dans le panel Pterodactyl en fonction des spécificités de votre projet (ex: détection de fin de démarrage).
+> Pensez à adapter la configuration de démarrage (Startup Configuration) dans le panel Pterodactyl en fonction des spécificités de votre projet (ex: détection de fin de démarrage).
 
 ## Installation
 
