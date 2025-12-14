@@ -1,24 +1,38 @@
-# Egg Pterodactyl - Python Générique
+# Egg Pterodactyl - Python Générique v4
 
-Cet egg Pterodactyl permet d'héberger facilement des applications Python génériques. Il est conçu pour être robuste, sécurisé et flexible.
+Cet egg Pterodactyl permet d'héberger des applications Python génériques de manière flexible et sécurisée. Il est conçu pour supporter un large éventail de projets, du simple script au bot Discord complexe.
 
-## Fonctionnalités
+## Sommaire
+
+- [Caractéristiques](#caractéristiques)
+- [Images Docker Supportées](#images-docker-supportées)
+- [Configuration](#configuration)
+  - [Variables du Serveur](#variables-du-serveur)
+- [Installation](#installation)
+- [Sécurité](#sécurité)
+  - [Jeton d'accès Git](#jeton-daccès-git)
+  - [Accès SFTP](#accès-sftp)
+- [Tests](#tests)
+- [Auteur](#auteur)
+
+## Caractéristiques
 
 *   **Support Multi-versions :** Compatible avec Python 3.8 à 3.14 via des images Docker optimisées.
 *   **Intégration Git :**
-    *   Clonage de dépôts publics et privés (via Token).
-    *   Choix de la branche.
+    *   Clonage de dépôts publics ou privés (via Token d'accès personnel).
+    *   Sélection de la branche à utiliser.
     *   Mise à jour automatique au démarrage (configurable).
 *   **Gestion des Dépendances :**
-    *   Installation automatique depuis `requirements.txt` (nom du fichier configurable).
-    *   Installation de paquets supplémentaires via une variable d'environnement.
-*   **Mode Upload Utilisateur :** Possibilité de désactiver Git pour gérer les fichiers manuellement via SFTP.
-*   **Sécurité :** Ne nécessite pas de privilèges root pour l'exécution du script.
+    *   Installation automatique depuis un fichier `requirements.txt` (nom de fichier configurable).
+    *   Installation de paquets Python supplémentaires via une variable d'environnement.
+    *   Support expérimental pour les paquets système (APT).
+*   **Installation d'outils :** Installation optionnelle de FFmpeg (build statique).
+*   **Flexibilité :** Un mode "User Upload" permet de désactiver Git pour gérer les fichiers manuellement via SFTP.
+*   **Sécurité :** Le conteneur ne s'exécute pas avec des privilèges root.
 
 ## Images Docker Supportées
 
-L'egg utilise les images [`ghcr.io/pelican-eggs/yolks`](https://github.com/pelican-eggs/yolks/pkgs/container/yolks) :
-
+L'egg utilise les images Docker optimisées de `ghcr.io/pelican-eggs/yolks` :
 *   Python 3.14
 *   Python 3.13
 *   Python 3.12
@@ -29,55 +43,68 @@ L'egg utilise les images [`ghcr.io/pelican-eggs/yolks`](https://github.com/pelic
 
 ## Configuration
 
+### Variables du Serveur
+
 Voici les variables disponibles pour configurer votre serveur :
 
 | Variable | Description | Défaut |
 | :--- | :--- | :--- |
-| **Adresse du dépôt Git** (`GIT_ADDRESS`) | URL du dépôt Git à cloner (ex: `https://github.com/user/repo`). | (Vide) |
-| **Branche Git** (`BRANCH`) | La branche à cloner. Laisser vide pour utiliser la branche par défaut. | (Vide) |
-| **Fichiers téléchargés par l'utilisateur** (`USER_UPLOAD`) | Mettre à `1` pour ignorer Git et gérer les fichiers manuellement. | `0` |
-| **Mise à jour automatique** (`AUTO_UPDATE`) | Mettre à `1` pour faire un `git pull` à chaque démarrage. | `0` |
-| **Mise à jour PIP au démarrage** (`PIP_UPDATE`) | Mettre à `1` pour installer les dépendances pip au démarrage. | `1` |
-| **Fichier .py principal** (`PY_FILE`) | Le point d'entrée de votre application (ex: `main.py`, `bot.py`). | `main.py` |
-| **Packages Python supplémentaires** (`PY_PACKAGES`) | Liste de paquets pip à installer (séparés par un espace). | (Vide) |
-| **Packages Système supplémentaires** (`SYSTEM_PACKAGES`) | Liste de paquets APT (.deb) à extraire. **Attention :** Les dépendances ne sont pas résolues automatiquement. Vous devez lister manuellement toutes les dépendances nécessaires. | (Vide) |
-| **Nom d'utilisateur Git** (`USERNAME`) | Nom d'utilisateur pour les dépôts privés. | (Vide) |
-| **Jeton d'accès Git** (`ACCESS_TOKEN`) | Personal Access Token (PAT) pour les dépôts privés. | (Vide) |
-| **Fichier requirements** (`REQUIREMENTS_FILE`) | Nom du fichier listant les dépendances. | `requirements.txt` |
-
-
-
-> [!CAUTION]
-> **Attention :** Le token Git est stocké dans la configuration locale du dépôt. Ne donnez pas d'accès SFTP à des tiers non de confiance.
-
-> [!IMPORTANT]
-> **Sécurité :** Le Jeton d'accès Git (`ACCESS_TOKEN`) est visible par les utilisateurs ayant accès aux variables du serveur. Utilisez un token avec des droits limités (Scope: Read Only).
+| **Adresse du dépôt Git** (`GIT_ADDRESS`) | URL `https` du dépôt Git à cloner (ex: `https://github.com/user/repo`). Ne pas inclure `.git` à la fin. | (Vide) |
+| **Branche Git** (`BRANCH`) | Nom de la branche à utiliser. Laisser vide pour utiliser la branche par défaut du dépôt. | (Vide) |
+| **Fichiers téléchargés par l'utilisateur** (`USER_UPLOAD`) | `1` pour ignorer l'installation Git. Utile si vous gérez vos fichiers manuellement via SFTP. | `0` |
+| **Mise à jour automatique** (`AUTO_UPDATE`) | `1` pour exécuter `git pull` à chaque démarrage du serveur. | `0` |
+| **Mise à jour PIP au démarrage** (`PIP_UPDATE`) | `1` pour installer les dépendances Python au démarrage. Désactivez (`0`) pour accélérer le boot si vos dépendances changent peu. | `1` |
+| **Fichier .py principal** (`PY_FILE`) | Point d'entrée de l'application (ex: `main.py`, `bot.py`). | `main.py` |
+| **Packages Python supplémentaires** (`PY_PACKAGES`) | Paquets `pip` à installer en plus du fichier `requirements.txt` (séparés par un espace). | (Vide) |
+| **Packages Système supplémentaires** (`SYSTEM_PACKAGES`) | **(Expert)** Liste des paquets `.deb` à installer (séparés par un espace). Voir avertissement de sécurité. | (Vide) |
+| **Nom d'utilisateur Git** (`USERNAME`) | Nom d'utilisateur pour cloner un dépôt privé. | (Vide) |
+| **Jeton d'accès Git** (`ACCESS_TOKEN`) | Jeton d'accès personnel (`Personal Access Token`) pour un dépôt privé. | (Vide) |
+| **Fichier requirements** (`REQUIREMENTS_FILE`) | Nom du fichier de dépendances `pip` (ex: `requirements.txt`). | `requirements.txt` |
+| **Installer FFmpeg** (`INSTALL_FFMPEG`) | `1` pour télécharger et installer une version statique de FFmpeg, prête à l'emploi. | `0` |
 
 > [!NOTE]
-> Pensez à adapter la configuration de démarrage (Startup Configuration) dans le panel Pterodactyl en fonction des spécificités de votre projet (ex: détection de fin de démarrage).
+> Pensez à adapter la configuration de démarrage (`Startup Configuration`) dans le panel Pterodactyl en fonction des spécificités de votre projet (par exemple, la détection de fin de démarrage).
 
 ## Installation
 
-1.  Téléchargez le fichier [egg_python_generic_4.json](egg_python_generic_4.json) depuis ce dépôt.
+1.  Téléchargez le fichier [`egg_python_generic_4.json`](egg_python_generic_4.json) depuis ce dépôt.
 2.  Dans votre panel Pterodactyl, allez dans **Nests** -> **Import Egg**.
 3.  Sélectionnez le fichier JSON et le Nest approprié.
 4.  Créez un nouveau serveur en utilisant cet egg.
 
-## Tests
+## Sécurité
 
-Il n'existe pas de commande de test automatisée pour cet egg. Le processus de test est manuel et consiste à vérifier que l'egg fonctionne comme prévu dans un environnement Pterodactyl.
+### Jeton d'accès Git
 
-Voici les étapes recommandées pour tester l'egg :
+> [!IMPORTANT]
+> Le **Jeton d'accès Git (`ACCESS_TOKEN`)** est visible en clair par tous les utilisateurs ayant accès à l'onglet "Startup" du serveur. Pour des raisons de sécurité, il est impératif d'utiliser un token avec des permissions minimales (lecture seule du dépôt).
 
-1.  **Importer l'egg** : Suivez les [instructions d'installation](#installation) pour importer le fichier [egg_python_generic_4.json](egg_python_generic_4.json) dans votre panel Pterodactyl.
-2.  **Créer un serveur** : Créez un nouveau serveur en utilisant cet egg. Configurez les variables du serveur selon vos besoins (par exemple, en fournissant un dépôt Git de test).
-3.  **Vérifier l'installation** : Démarrez le serveur et suivez les journaux de la console pour vous assurer que l'installation se déroule sans erreur. Vérifiez que le dépôt Git est cloné et que les dépendances Python sont installées correctement.
-4.  **Valider la fonctionnalité** : Assurez-vous que votre application Python démarre et fonctionne comme prévu. Testez les différentes fonctionnalités de l'egg, comme la mise à jour automatique.
+### Accès SFTP
 
-Ce processus de test manuel garantit que l'egg est compatible avec votre environnement et que la configuration de votre serveur est correcte.
+> [!CAUTION]
+> Le token Git est stocké dans la configuration locale du dépôt sur le serveur (`/home/container/.git/config`). **Ne donnez jamais d'accès SFTP ou de sous-utilisateur à des personnes non fiables**, car elles pourraient facilement récupérer ce token.
+
+### Paquets Système (APT)
+
+> [!WARNING]
+> La fonctionnalité d'installation de paquets système (`SYSTEM_PACKAGES`) est **expérimentale** et doit être utilisée avec une extrême prudence.
+> *   **Pas de résolution de dépendances :** Vous devez lister manuellement **tous** les fichiers `.deb` nécessaires pour un paquet et ses dépendances. Omettre une dépendance conduit quasi-systématiquement à un crash (`Segmentation fault`).
+> *   **Instabilité :** Des paquets système mal configurés peuvent rendre le serveur instable ou inutilisable.
+> *   **Alternative :** Pour des outils complexes comme FFmpeg, privilégiez l'option `INSTALL_FFMPEG` qui utilise un build statique et fiable.
+
+## Validation
+
+Il n'existe pas de suite de tests automatisés pour cet egg. La validation se fait manuellement en suivant ces étapes :
+
+1.  **Importation :** Suivez les [instructions d'installation](#installation) pour importer l'egg dans votre panel Pterodactyl.
+2.  **Création d'un serveur :** Créez un serveur en utilisant cet egg. Configurez-le avec un dépôt Git de test ou en mode "User Upload".
+3.  **Vérification :** Démarrez le serveur et observez la console. Assurez-vous que le clonage Git et l'installation des dépendances (`pip`) se déroulent sans erreur.
+4.  **Fonctionnement :** Confirmez que votre application Python démarre correctement et que les fonctionnalités clés (comme la mise à jour automatique) se comportent comme attendu.
+
+Ce processus simple permet de garantir que l'egg est compatible avec votre environnement et que la configuration est correcte.
 
 ## Auteur
 
-*   **GitHub:** @Xougui  
-*   **Mail:** xougui.7@gmail.com  
-*   **Discord:** @xougui 
+*   **GitHub:** @Xougui
+*   **Mail:** xougui.7@gmail.com
+*   **Discord:** @xougui
