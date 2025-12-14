@@ -40,10 +40,12 @@ Voici les variables disponibles pour configurer votre serveur :
 | **Mise à jour PIP au démarrage** (`PIP_UPDATE`) | Mettre à `1` pour installer les dépendances pip au démarrage. | `1` |
 | **Fichier .py principal** (`PY_FILE`) | Le point d'entrée de votre application (ex: `main.py`, `bot.py`). | `main.py` |
 | **Packages Python supplémentaires** (`PY_PACKAGES`) | Liste de paquets pip à installer (séparés par un espace). | (Vide) |
-| **Packages Système supplémentaires** (`SYSTEM_PACKAGES`) | Liste de paquets APT à installer (séparés par un espace). | (Vide) |
+| **Packages Système supplémentaires** (`SYSTEM_PACKAGES`) | Liste de paquets APT (.deb) à extraire. **Attention :** Les dépendances ne sont pas résolues automatiquement. Vous devez lister manuellement toutes les dépendances nécessaires. | (Vide) |
 | **Nom d'utilisateur Git** (`USERNAME`) | Nom d'utilisateur pour les dépôts privés. | (Vide) |
 | **Jeton d'accès Git** (`ACCESS_TOKEN`) | Personal Access Token (PAT) pour les dépôts privés. | (Vide) |
 | **Fichier requirements** (`REQUIREMENTS_FILE`) | Nom du fichier listant les dépendances. | `requirements.txt` |
+
+> **Sécurité :** Le Jeton d'accès Git (`ACCESS_TOKEN`) est visible par les utilisateurs ayant accès aux variables du serveur. Utilisez un token avec des droits limités (Scope: Read Only).
 
 > **Attention :** Le token Git est stocké dans la configuration locale du dépôt. Ne donnez pas d'accès SFTP à des tiers non de confiance.
 
