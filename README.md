@@ -47,6 +47,8 @@ Voici les variables disponibles pour configurer votre serveur :
 
 > **Attention :** Le token Git est stocké dans la configuration locale du dépôt. Ne donnez pas d'accès SFTP à des tiers non de confiance.
 
+> **Note :** Pensez à adapter la configuration de démarrage (Startup Configuration) dans le panel Pterodactyl en fonction des spécificités de votre projet (ex: détection de fin de démarrage).
+
 ## Installation
 
 1.  Téléchargez le fichier [egg_python_generic_4.json](egg_python_generic_4.json) depuis ce dépôt.
