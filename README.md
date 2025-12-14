@@ -47,10 +47,10 @@ Voici les variables disponibles pour configurer votre serveur :
 
 
 
-> [!IMPORTANT]
+> [!CAUTION]
 > **Attention :** Le token Git est stocké dans la configuration locale du dépôt. Ne donnez pas d'accès SFTP à des tiers non de confiance.
 
-> [!TIP]
+> [!IMPORTANT]
 > **Sécurité :** Le Jeton d'accès Git (`ACCESS_TOKEN`) est visible par les utilisateurs ayant accès aux variables du serveur. Utilisez un token avec des droits limités (Scope: Read Only).
 
 > [!NOTE]
