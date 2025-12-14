@@ -62,7 +62,7 @@ Il n'existe pas de commande de test automatisée pour cet egg. Le processus de t
 
 Voici les étapes recommandées pour tester l'egg :
 
-1.  **Importer l'egg** : Suivez les [instructions d'installation](#installation) pour importer le fichier [egg_python_generic_3.json](egg_python_generic_3.json) dans votre panel Pterodactyl.
+1.  **Importer l'egg** : Suivez les [instructions d'installation](#installation) pour importer le fichier [egg_python_generic_4.json](egg_python_generic_4.json) dans votre panel Pterodactyl.
 2.  **Créer un serveur** : Créez un nouveau serveur en utilisant cet egg. Configurez les variables du serveur selon vos besoins (par exemple, en fournissant un dépôt Git de test).
 3.  **Vérifier l'installation** : Démarrez le serveur et suivez les journaux de la console pour vous assurer que l'installation se déroule sans erreur. Vérifiez que le dépôt Git est cloné et que les dépendances Python sont installées correctement.
 4.  **Valider la fonctionnalité** : Assurez-vous que votre application Python démarre et fonctionne comme prévu. Testez les différentes fonctionnalités de l'egg, comme la mise à jour automatique.
