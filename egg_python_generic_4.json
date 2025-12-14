@@ -1,0 +1,148 @@
+{
+    "_comment": "DO NOT EDIT: FILE GENERATED AUTOMATICALLY BY PTERODACTYL PANEL - PTERODACTYL.IO",
+    "meta": {
+        "version": "PTDL_v2",
+        "update_url": null
+    },
+    "exported_at": "2025-12-14T10:00:00+01:00",
+    "name": "Python Générique v4 (Expert)",
+    "author": "xougui.7@gmail.com",
+    "description": "Un egg Python générique optimisé (v4) avec support dépendances système et sécurité renforcée.\r\n\r\nSupporte Git, requirements.txt, APT packages, et gestion avancée du démarrage.",
+    "features": null,
+    "docker_images": {
+        "Python 3.14": "ghcr.io/pelican-eggs/yolks:python_3.14",
+        "Python 3.13": "ghcr.io/pelican-eggs/yolks:python_3.13",
+        "Python 3.12": "ghcr.io/pelican-eggs/yolks:python_3.12",
+        "Python 3.11": "ghcr.io/pelican-eggs/yolks:python_3.11",
+        "Python 3.10": "ghcr.io/pelican-eggs/yolks:python_3.10",
+        "Python 3.9": "ghcr.io/pelican-eggs/yolks:python_3.9",
+        "Python 3.8": "ghcr.io/pelican-eggs/yolks:python_3.8"
+    },
+    "file_denylist": [],
+    "startup": "export PATH=$PATH:/home/container/.local/bin; export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/container/.apt/usr/lib/x86_64-linux-gnu:/home/container/.apt/usr/lib:/home/container/.apt/lib/x86_64-linux-gnu:/home/container/.apt/lib; if [[ -d .git ]] && [[ \"{{AUTO_UPDATE}}\" == \"1\" ]]; then git pull; fi; if [[ \"{{PIP_UPDATE}}\" == \"1\" ]]; then if [[ ! -z \"{{PY_PACKAGES}}\" ]]; then pip install --prefix .local {{PY_PACKAGES}}; fi; if [[ -f /home/container/${REQUIREMENTS_FILE} ]]; then pip install --prefix .local -r ${REQUIREMENTS_FILE}; fi; fi; /usr/local/bin/python /home/container/{{PY_FILE}}",
+    "config": {
+        "files": "{}",
+        "startup": "{\r\n    \"done\": \"has connected to Gateway\"\r\n}",
+        "logs": "{}",
+        "stop": "^C"
+    },
+    "scripts": {
+        "installation": {
+            "script": "#!/bin/bash\r\n# Script d'installation d'application Python optimisé v4\r\n#\r\n\r\napt update\r\napt install -y git curl jq file unzip make gcc g++ libtool\r\n\r\nmkdir -p /mnt/server\r\ncd /mnt/server\r\n\r\n# 0. Installation des dépendances système (APT)\r\nif [ ! -z \"${SYSTEM_PACKAGES}\" ]; then\r\n    echo \"Installation des dépendances système (APT)...\"\r\n    mkdir -p /mnt/server/.apt\r\n    cd /mnt/server/.apt\r\n    # On configure apt pour pouvoir télécharger dans le dossier courant\r\n    for pkg in ${SYSTEM_PACKAGES}; do\r\n        echo \"Telechargement de $pkg...\"\r\n        apt-get download $pkg\r\n        echo \"Extraction de $pkg...\"\r\n        dpkg -x *.deb .\r\n        rm *.deb\r\n    done\r\n    echo \"Dépendances système installées dans .apt\"\r\n    cd /mnt/server\r\nfi\r\n\r\n# 1. Gestion Upload Utilisateur\r\nif [ \"${USER_UPLOAD}\" == \"true\" ] || [ \"${USER_UPLOAD}\" == \"1\" ]; then\r\n    echo -e \"Mode User Upload activé. Installation Git ignorée.\"\r\n    # On tente quand même d'installer les dépendances si le fichier existe déjà\r\n    if [ ! -z \"${REQUIREMENTS_FILE}\" ] && [ -f \"/mnt/server/${REQUIREMENTS_FILE}\" ]; then\r\n        echo \"Installation des dépendances détectées...\"\r\n        pip install --prefix .local -r ${REQUIREMENTS_FILE}\r\n    fi\r\n    exit 0\r\nfi\r\n\r\n# 2. Configuration Git\r\nif [[ ${GIT_ADDRESS} != *.git ]]; then\r\n    GIT_ADDRESS=${GIT_ADDRESS}.git\r\nfi\r\n\r\nif [ -z \"${USERNAME}\" ] && [ -z \"${ACCESS_TOKEN}\" ]; then\r\n    echo -e \"Utilisation de l'appel Git anonyme.\"\r\nelse\r\n    # Sécurisation de l'affichage du token dans les logs (optionnel mais recommandé)\r\n    echo -e \"Utilisation des identifiants Git fournis.\"\r\n    GIT_ADDRESS=\"https://${USERNAME}:${ACCESS_TOKEN}@$(echo -e ${GIT_ADDRESS} | cut -d/ -f3-)\"\r\nfi\r\n\r\n# 3. Logique de Clone/Pull robuste\r\nif [ \"$(ls -A /mnt/server)\" ]; then\r\n    echo -e \"Le répertoire /mnt/server n'est pas vide.\"\r\n    if [ -d .git ]; then\r\n        echo -e \"Répertoire .git détecté. Tentative de mise à jour...\"\r\n        git pull\r\n    else\r\n        echo -e \"ERREUR: Des fichiers sont présents mais pas de dossier .git.\"\r\n        echo -e \"Pour éviter la perte de données, l'installateur s'arrête ici.\"\r\n        exit 10\r\n    fi\r\nelse\r\n    echo -e \"Répertoire vide. Clonage du dépôt...\"\r\n    if [ -z ${BRANCH} ]; then\r\n        echo -e \"Clonage de la branche par défaut.\"\r\n        git clone ${GIT_ADDRESS} .\r\n    else\r\n        echo -e \"Clonage de la branche : ${BRANCH}\"\r\n        git clone --single-branch --branch ${BRANCH} ${GIT_ADDRESS} .\r\n    fi\r\nfi\r\n\r\n# 4. Installation des dépendances Python\r\nexport HOME=/mnt/server\r\n\r\necho \"Installation des dépendances Python...\"\r\n\r\nif [[ ! -z ${PY_PACKAGES} ]]; then\r\n    pip install --prefix .local ${PY_PACKAGES}\r\nfi\r\n\r\n# Correction de la logique de vérification du fichier requirements\r\nif [ ! -z \"${REQUIREMENTS_FILE}\" ] && [ -f \"/mnt/server/${REQUIREMENTS_FILE}\" ]; then\r\n    echo \"Installation depuis ${REQUIREMENTS_FILE}\"\r\n    pip install --prefix .local -r ${REQUIREMENTS_FILE}\r\nelse\r\n    echo \"Aucun fichier ${REQUIREMENTS_FILE} trouvé. Installation des dépendances sautée.\"\r\nfi\r\n\r\necho -e \"Installation terminée avec succès.\"\r\nexit 0",
+            "container": "python:3.11-slim-bookworm",
+            "entrypoint": "bash"
+        }
+    },
+    "variables": [
+        {
+            "name": "Adresse du dépôt Git",
+            "description": "Dépôt Git à cloner (ex: https://github.com/user/repo)",
+            "env_variable": "GIT_ADDRESS",
+            "default_value": "",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "nullable|string",
+            "field_type": "text"
+        },
+        {
+            "name": "Branche Git",
+            "description": "Branche spécifique à cloner (laisser vide pour défaut).",
+            "env_variable": "BRANCH",
+            "default_value": "",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "nullable|string",
+            "field_type": "text"
+        },
+        {
+            "name": "Fichiers téléchargés par l'utilisateur",
+            "description": "Si activé (1), ignore Git pour laisser l'utilisateur gérer ses fichiers.",
+            "env_variable": "USER_UPLOAD",
+            "default_value": "0",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|boolean",
+            "field_type": "text"
+        },
+        {
+            "name": "Mise à jour automatique",
+            "description": "Pull git au démarrage du serveur ?",
+            "env_variable": "AUTO_UPDATE",
+            "default_value": "0",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|boolean",
+            "field_type": "text"
+        },
+        {
+            "name": "Mise à jour PIP au démarrage",
+            "description": "Si activé (1), tente d'installer les dépendances (pip) à chaque démarrage. Désactivez pour gagner du temps au boot.",
+            "env_variable": "PIP_UPDATE",
+            "default_value": "1",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|boolean",
+            "field_type": "text"
+        },
+        {
+            "name": "Fichier .py principal",
+            "description": "Le point d'entrée de l'application (ex: main.py, bot.py).",
+            "env_variable": "PY_FILE",
+            "default_value": "main.py",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|string",
+            "field_type": "text"
+        },
+        {
+            "name": "Packages Python supplémentaires",
+            "description": "Packages à installer via pip (séparés par espace).",
+            "env_variable": "PY_PACKAGES",
+            "default_value": "",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "nullable|string",
+            "field_type": "text"
+        },
+        {
+            "name": "Packages Système supplémentaires",
+            "description": "Packages APT à pré-installer (séparés par espace). Nécessite une réinstallation du serveur.",
+            "env_variable": "SYSTEM_PACKAGES",
+            "default_value": "",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "nullable|string",
+            "field_type": "text"
+        },
+        {
+            "name": "Nom d'utilisateur Git",
+            "description": "Username pour repo privé.",
+            "env_variable": "USERNAME",
+            "default_value": "",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "nullable|string",
+            "field_type": "text"
+        },
+        {
+            "name": "Jeton d'accès Git",
+            "description": "Token d'accès personnel (PAT). ATTENTION: Stocké en clair. Ne donnez pas d'accès SFTP à des tiers non de confiance.",
+            "env_variable": "ACCESS_TOKEN",
+            "default_value": "",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "nullable|string",
+            "field_type": "text"
+        },
+        {
+            "name": "Fichier requirements",
+            "description": "Nom du fichier de dépendances.",
+            "env_variable": "REQUIREMENTS_FILE",
+            "default_value": "requirements.txt",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|string",
+            "field_type": "text"
+        }
+    ]
+}

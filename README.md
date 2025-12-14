@@ -37,15 +37,19 @@ Voici les variables disponibles pour configurer votre serveur :
 | **Branche Git** (`BRANCH`) | La branche à cloner. Laisser vide pour utiliser la branche par défaut. | (Vide) |
 | **Fichiers téléchargés par l'utilisateur** (`USER_UPLOAD`) | Mettre à `1` pour ignorer Git et gérer les fichiers manuellement. | `0` |
 | **Mise à jour automatique** (`AUTO_UPDATE`) | Mettre à `1` pour faire un `git pull` à chaque démarrage. | `0` |
+| **Mise à jour PIP au démarrage** (`PIP_UPDATE`) | Mettre à `1` pour installer les dépendances pip au démarrage. | `1` |
 | **Fichier .py principal** (`PY_FILE`) | Le point d'entrée de votre application (ex: `main.py`, `bot.py`). | `main.py` |
 | **Packages Python supplémentaires** (`PY_PACKAGES`) | Liste de paquets pip à installer (séparés par un espace). | (Vide) |
+| **Packages Système supplémentaires** (`SYSTEM_PACKAGES`) | Liste de paquets APT à installer (séparés par un espace). | (Vide) |
 | **Nom d'utilisateur Git** (`USERNAME`) | Nom d'utilisateur pour les dépôts privés. | (Vide) |
 | **Jeton d'accès Git** (`ACCESS_TOKEN`) | Personal Access Token (PAT) pour les dépôts privés. | (Vide) |
 | **Fichier requirements** (`REQUIREMENTS_FILE`) | Nom du fichier listant les dépendances. | `requirements.txt` |
 
+> **Attention :** Le token Git est stocké dans la configuration locale du dépôt. Ne donnez pas d'accès SFTP à des tiers non de confiance.
+
 ## Installation
 
-1.  Téléchargez le fichier [egg_python_generic_3.json](egg_python_generic_3.json) depuis ce dépôt.
+1.  Téléchargez le fichier [egg_python_generic_4.json](egg_python_generic_4.json) depuis ce dépôt.
 2.  Dans votre panel Pterodactyl, allez dans **Nests** -> **Import Egg**.
 3.  Sélectionnez le fichier JSON et le Nest approprié.
 4.  Créez un nouveau serveur en utilisant cet egg.
