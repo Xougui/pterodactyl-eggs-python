@@ -1,4 +1,4 @@
-_comment: 'DO NOT EDIT: FILE GENERATED AUTOMATICALLY BY PELICAN PANEL'
+_comment: 'DO NOT EDIT: FILE GENERATED AUTOMATICALLY BY PANEL'
 meta:
   version: PLCN_v3
   update_url: null
@@ -7,7 +7,7 @@ name: 'Python Générique v5 (Pelican Expert)'
 author: xougui.7@gmail.com
 uuid: 6d14e168-eb11-40ee-99b0-3e9fe8386fef
 description: "Egg Python générique haute performance optimisé pour Pelican Panel (PLCN_v3).\r\n\r\nFonctionnalités avancées :\r\n- Support Git (dépôts publics et privés via PAT).\r\n- Auto-Update Git & dépendances pip au démarrage.\r\n- Support des fichiers requirements (customizable).\r\n- Auto-détection / Installation FFmpeg statique.\r\n- Extraction et intégration de paquets système (.deb / APT).\r\n- Environnement sandboxé sécurisé."
-icon: https://raw.githubusercontent.com/pelican-eggs/yolks/master/python/python.png
+icon: https://upload.wikimedia.org/wikipedia/commons/3/31/Python-logo.png
 tags:
   - 'Python'
   - 'Discord Bot'
