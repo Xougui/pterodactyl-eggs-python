@@ -1,14 +1,19 @@
 {
     "_comment": "DO NOT EDIT: FILE GENERATED AUTOMATICALLY BY PANEL",
     "meta": {
-        "version": "PTDL_v2",
+        "version": "PLCN_v3",
         "update_url": null
     },
-    "exported_at": "2026-08-09T09:30:00+02:00",
-    "name": "Python Générique v4 (Expert)",
+    "exported_at": "2026-08-09T10:00:00+02:00",
+    "name": "Python Générique v5 (Pelican Expert)",
     "author": "xougui.7@gmail.com",
-    "description": "Egg Python générique haute performance optimisé pour Pelican Panel.\r\n\r\nFonctionnalités avancées :\r\n- Support Git (dépôts publics et privés via PAT).\r\n- Auto-Update Git & dépendances pip au démarrage.\r\n- Support des fichiers requirements.\r\n- Auto-détection / Installation FFmpeg statique.\r\n- Extraction et intégration de paquets système (.deb / APT).",
-    "features": null,
+    "uuid": "6d14e168-eb11-40ee-99b0-3e9fe8386fef",
+    "description": "Egg Python générique haute performance optimisé pour Pelican Panel (PLCN_v3).\r\n\r\nFonctionnalités avancées :\r\n- Support Git (dépôts publics et privés via PAT).\r\n- Auto-Update Git & dépendances pip au démarrage.\r\n- Support des fichiers requirements.\r\n- Auto-détection / Installation FFmpeg statique.\r\n- Extraction et intégration de paquets système (.deb / APT).",
+    "tags": [
+        "python",
+        "bot"
+    ],
+    "features": [],
     "docker_images": {
         "Python 3.14": "ghcr.io/pelican-eggs/yolks:python_3.14",
         "Python 3.13": "ghcr.io/pelican-eggs/yolks:python_3.13",
@@ -19,16 +24,18 @@
         "Python 3.8": "ghcr.io/pelican-eggs/yolks:python_3.8"
     },
     "file_denylist": [],
-    "startup": "cat << 'EOF'\n   _  __           _  __               __  __           __  _            \n  | |/ /___  __  _| |/ /___  __  __   / / / /___  _____/ /_(_)___  ____ _\n  |   / __ \\/ / / /   / __ \\/ / / /  / /_/ / __ \\/ ___/ __/ / __ \\/ __ `/\n /   / /_/ / /_/ /   / /_/ / /_/ /  / __  / /_/ (__  ) /_/ / / / / /_/ / \n/_/|_\\____/\\__,_/_/|_\\____/\\__,_/  /_/ /_/\\____/____/\\__/_/_/ /_/\\__, /  \n                                                                /____/   \nEOF\nset -e; export PATH=$PATH:/home/container/.local/bin:/home/container; export LD_LIBRARY_PATH=/usr/lib/x86_64-linux-gnu:$LD_LIBRARY_PATH:/home/container/.apt/usr/lib/x86_64-linux-gnu:/home/container/.apt/usr/lib:/home/container/.apt/lib/x86_64-linux-gnu:/home/container/.apt/lib; if [[ -d .git ]] && [[ \"{{AUTO_UPDATE}}\" == \"1\" ]]; then git pull || echo \"[WARN] Git pull failed\"; fi; if [[ \"{{PIP_UPDATE}}\" == \"1\" ]]; then if [[ ! -z \"{{PY_PACKAGES}}\" ]]; then pip install -U --prefix .local {{PY_PACKAGES}}; fi; if [[ -f /home/container/${REQUIREMENTS_FILE} ]]; then pip install -U --prefix .local -r ${REQUIREMENTS_FILE}; fi; fi; exec /usr/local/bin/python /home/container/{{PY_FILE}}",
+    "startup_commands": {
+        "Default": "cat << 'EOF'\n   _  __           _  __               __  __           __  _            \n  | |/ /___  __  _| |/ /___  __  __   / / / /___  _____/ /_(_)___  ____ _\n  |   / __ \\/ / / /   / __ \\/ / / /  / /_/ / __ \\/ ___/ __/ / __ \\/ __ `/\n /   / /_/ / /_/ /   / /_/ / /_/ /  / __  / /_/ (__  ) /_/ / / / / /_/ / \n/_/|_\\____/\\__,_/_/|_\\____/\\__,_/  /_/ /_/__/____/\\__/_/_/ /_/\\__, /  \n                                                                /____/   \nEOF\nset -e; export PATH=$PATH:/home/container/.local/bin:/home/container; export LD_LIBRARY_PATH=/usr/lib/x86_64-linux-gnu:$LD_LIBRARY_PATH:/home/container/.apt/usr/lib/x86_64-linux-gnu:/home/container/.apt/usr/lib:/home/container/.apt/lib/x86_64-linux-gnu:/home/container/.apt/lib; if [[ -d .git ]] && [[ \"{{AUTO_UPDATE}}\" == \"1\" ]]; then git pull || echo \"[WARN] Git pull failed\"; fi; if [[ \"{{PIP_UPDATE}}\" == \"1\" ]]; then if [[ ! -z \"{{PY_PACKAGES}}\" ]]; then pip install -U --prefix .local {{PY_PACKAGES}}; fi; if [[ -f /home/container/${REQUIREMENTS_FILE} ]]; then pip install -U --prefix .local -r ${REQUIREMENTS_FILE}; fi; fi; exec /usr/local/bin/python /home/container/{{PY_FILE}}"
+    },
     "config": {
         "files": "{}",
-        "startup": "{\r\n    \"done\": \"has connected to Gateway\"\r\n}",
+        "startup": "{\n    \"done\": \"has connected to Gateway\"\n}",
         "logs": "{}",
         "stop": "^C"
     },
     "scripts": {
         "installation": {
-            "script": "#!/bin/bash\r\n# Script d'installation d'application Python optimisé v4\r\n\r\napt update\r\napt install -y git curl jq file unzip make gcc g++ libtool tar xz-utils\r\n\r\nmkdir -p /mnt/server\r\ncd /mnt/server\r\n\r\nif [ \"${INSTALL_FFMPEG}\" == \"1\" ] || [ \"${INSTALL_FFMPEG}\" == \"true\" ]; then\r\n    echo \"[FFMPEG] Installation de FFmpeg (Build Statique)...\"\r\n    if [ ! -f \"./ffmpeg\" ] || [ ! -s \"./ffmpeg\" ]; then\r\n        curl -L https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz -o ffmpeg.tar.xz\r\n        tar -xf ffmpeg.tar.xz --wildcards --strip-components=1 '*/ffmpeg' '*/ffprobe'\r\n        rm ffmpeg.tar.xz\r\n        chmod +x ffmpeg ffprobe\r\n        echo \"[INFO] FFmpeg installé dans /mnt/server.\"\r\n    fi\r\nfi\r\n\r\nif [ \"${USER_UPLOAD}\" == \"true\" ] || [ \"${USER_UPLOAD}\" == \"1\" ]; then\r\n    echo \"[INFO] Mode User Upload activé. Installation Git ignorée.\"\r\n    exit 0\r\nfi\r\n\r\nif [ ! -z \"${GIT_ADDRESS}\" ]; then\r\n    if [[ ${GIT_ADDRESS} != *.git ]]; then\r\n        GIT_ADDRESS=${GIT_ADDRESS}.git\r\n    fi\r\n    if [ ! -z \"${USERNAME}\" ] && [ ! -z \"${ACCESS_TOKEN}\" ]; then\r\n        GIT_ADDRESS=\"https://${USERNAME}:${ACCESS_TOKEN}@$(echo -e ${GIT_ADDRESS} | cut -d/ -f3-)\"\r\n    fi\r\n    if [ -d .git ]; then\r\n        git pull\r\n    else\r\n        git clone ${GIT_ADDRESS} .\r\n        if [ ! -z \"${BRANCH}\" ]; then\r\n            git checkout ${BRANCH}\r\n        fi\r\n    fi\r\nfi\r\n\r\nif [ ! -z \"${SYSTEM_PACKAGES}\" ]; then\r\n    mkdir -p /mnt/server/.apt\r\n    cd /mnt/server/.apt\r\n    rm -f *.deb\r\n    for pkg in ${SYSTEM_PACKAGES}; do\r\n        apt-get download $pkg\r\n        dpkg -x *.deb .\r\n        rm *.deb\r\n    done\r\n    cd /mnt/server\r\nfi\r\n\r\necho \"[INFO] Installation terminée.\"\r\nexit 0",
+            "script": "#!/bin/bash\n# Script d'installation d'application Python optimisé v5\nset -e\n\napt update -q\napt install -y -q git curl jq file unzip make gcc g++ libtool tar xz-utils\n\nmkdir -p /mnt/server\ncd /mnt/server\n\nif [ \"${INSTALL_FFMPEG}\" == \"1\" ] || [ \"${INSTALL_FFMPEG}\" == \"true\" ]; then\n    echo \"[FFMPEG] Installation de FFmpeg (Build Statique)...\"\n    if [ ! -f \"./ffmpeg\" ] || [ ! -s \"./ffmpeg\" ]; then\n        curl -sL https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz -o ffmpeg.tar.xz\n        tar -xf ffmpeg.tar.xz --wildcards --strip-components=1 '*/ffmpeg' '*/ffprobe'\n        rm -f ffmpeg.tar.xz\n        chmod +x ffmpeg ffprobe\n        echo \"[INFO] FFmpeg et FFprobe installes avec succes dans /mnt/server.\"\n    fi\nfi\n\nif [ \"${USER_UPLOAD}\" == \"true\" ] || [ \"${USER_UPLOAD}\" == \"1\" ]; then\n    echo \"[INFO] Mode User Upload active. Clonage Git ignore.\"\n    exit 0\nfi\n\nif [ -z \"${GIT_ADDRESS}\" ]; then\n    echo \"[WARN] Aucune adresse Git fournie. Mode manuel.\"\n    exit 0\nfi\n\nif [[ ${GIT_ADDRESS} != *.git ]]; then\n    GIT_ADDRESS=\"${GIT_ADDRESS}.git\"\nfi\n\nif [ -n \"${USERNAME}\" ] && [ -n \"${ACCESS_TOKEN}\" ]; then\n    CLEAN_URL=$(echo \"${GIT_ADDRESS}\" | sed -E 's#^https?://##')\n    GIT_ADDRESS=\"https://${USERNAME}:${ACCESS_TOKEN}@${CLEAN_URL}\"\nfi\n\nif [ -d .git ]; then\n    git pull || echo \"[WARN] Echec du pull Git.\"\nelse\n    if [ -z \"$(ls -A /mnt/server)\" ]; then\n        if [ -n \"${BRANCH}\" ]; then\n            git clone --single-branch --branch \"${BRANCH}\" \"${GIT_ADDRESS}\" .\n        else\n            git clone \"${GIT_ADDRESS}\" .\n        fi\n    else\n        git init\n        git remote add origin \"${GIT_ADDRESS}\"\n        git fetch origin\n        TARGET_BRANCH=\"${BRANCH:-main}\"\n        git reset --mixed \"origin/${TARGET_BRANCH}\" || git reset --mixed \"origin/master\" || true\n    fi\nfi\n\nif [ -n \"${SYSTEM_PACKAGES}\" ]; then\n    mkdir -p /mnt/server/.apt\n    cd /mnt/server/.apt\n    rm -f *.deb\n    for pkg in ${SYSTEM_PACKAGES}; do\n        apt-get download -q \"$pkg\" || echo \"[WARN] Impossible de telecharger $pkg\"\n    done\n    if ls *.deb 1> /dev/null 2>&1; then\n        for deb in *.deb; do dpkg -x \"$deb\" .; done\n        rm -f *.deb\n    fi\n    cd /mnt/server\nfi\n\necho \"[INFO] Installation terminee.\"\nexit 0",
             "container": "python:3.11-slim-bookworm",
             "entrypoint": "bash"
         }
