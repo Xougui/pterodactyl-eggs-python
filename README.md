@@ -1,6 +1,6 @@
-# Egg Pterodactyl - Python Générique v4
+# Egg Pelican Panel - Python Générique v4
 
-Cet egg Pterodactyl permet d'héberger des applications Python génériques de manière flexible et sécurisée. Il est conçu pour supporter un large éventail de projets, du simple script au bot Discord complexe.
+Cet egg Pelican Panel permet d'héberger des applications Python génériques de manière flexible et sécurisée. Il est conçu pour supporter un large éventail de projets, du simple script au bot Discord complexe.
 
 ## Sommaire
 
@@ -63,14 +63,14 @@ Voici les variables disponibles pour configurer votre serveur :
 | **Installer FFmpeg** (`INSTALL_FFMPEG`) | `1` pour télécharger et installer une version statique de FFmpeg, prête à l'emploi. | `0` |
 
 > [!NOTE]
-> Pensez à adapter la configuration de démarrage (`Startup Configuration`) dans le panel Pterodactyl en fonction des spécificités de votre projet (par exemple, la détection de fin de démarrage).
+> Pensez à adapter la configuration de démarrage (`Startup Configuration`) dans le panel Pelican Panel en fonction des spécificités de votre projet (par exemple, la détection de fin de démarrage).
 
 ## Installation
 
-1.  Téléchargez le fichier [`egg_python_generic_4.json`](egg_python_generic_4.json) depuis ce dépôt.
-2.  Dans votre panel Pterodactyl, allez dans **Nests** -> **Import Egg**.
-3.  Sélectionnez le fichier JSON et le Nest approprié.
-4.  Créez un nouveau serveur en utilisant cet egg.
+1. Téléchargez le fichier [`egg_python_generic_4.yaml`](egg_python_generic_4.yaml) (au format natif Pelican Panel `PLCN_v3`) ou la version JSON [`egg_python_generic_4.json`](egg_python_generic_4.json).
+2. Dans votre panel Pelican, allez dans l'administration des Eggs puis **Import Egg**.
+3. Sélectionnez le fichier YAML/JSON et le Nest approprié.
+4. Créez un nouveau serveur en utilisant cet egg.
 
 ## Sécurité
 
@@ -96,7 +96,7 @@ Voici les variables disponibles pour configurer votre serveur :
 
 Il n'existe pas de suite de tests automatisés pour cet egg. La validation se fait manuellement en suivant ces étapes :
 
-1.  **Importation :** Suivez les [instructions d'installation](#installation) pour importer l'egg dans votre panel Pterodactyl.
+1.  **Importation :** Suivez les [instructions d'installation](#installation) pour importer l'egg dans votre panel Pelican.
 2.  **Création d'un serveur :** Créez un serveur en utilisant cet egg. Configurez-le avec un dépôt Git de test ou en mode "User Upload".
 3.  **Vérification :** Démarrez le serveur et observez la console. Assurez-vous que le clonage Git et l'installation des dépendances (`pip`) se déroulent sans erreur.
 4.  **Fonctionnement :** Confirmez que votre application Python démarre correctement et que les fonctionnalités clés (comme la mise à jour automatique) se comportent comme attendu.

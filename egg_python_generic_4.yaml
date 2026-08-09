@@ -1,0 +1,286 @@
+_comment: 'DO NOT EDIT: FILE GENERATED AUTOMATICALLY BY PELICAN PANEL'
+meta:
+  version: PLCN_v3
+  update_url: null
+exported_at: '2026-08-08T21:45:00+00:00'
+name: 'Python Générique v5 (Pelican Expert)'
+author: xougui.7@gmail.com
+uuid: 6d14e168-eb11-40ee-99b0-3e9fe8386fef
+description: "Egg Python générique haute performance optimisé pour Pelican Panel (PLCN_v3).\r\n\r\nFonctionnalités avancées :\r\n- Support Git (dépôts publics et privés via PAT).\r\n- Auto-Update Git & dépendances pip au démarrage.\r\n- Support des fichiers requirements (customizable).\r\n- Auto-détection / Installation FFmpeg statique.\r\n- Extraction et intégration de paquets système (.deb / APT).\r\n- Environnement sandboxé sécurisé."
+icon: https://raw.githubusercontent.com/pelican-eggs/yolks/master/python/python.png
+tags:
+  - 'Python'
+  - 'Discord Bot'
+  - 'Pelican Panel'
+features: null
+docker_images:
+  'Python 3.14': 'ghcr.io/pelican-eggs/yolks:python_3.14'
+  'Python 3.13': 'ghcr.io/pelican-eggs/yolks:python_3.13'
+  'Python 3.12': 'ghcr.io/pelican-eggs/yolks:python_3.12'
+  'Python 3.11': 'ghcr.io/pelican-eggs/yolks:python_3.11'
+  'Python 3.10': 'ghcr.io/pelican-eggs/yolks:python_3.10'
+  'Python 3.9': 'ghcr.io/pelican-eggs/yolks:python_3.9'
+  'Python 3.8': 'ghcr.io/pelican-eggs/yolks:python_3.8'
+file_denylist: {}
+startup_commands:
+  Default: |-
+    cat << 'EOF'
+   _  __           _  __               __  __           __  _            
+  | |/ /___  __  _| |/ /___  __  __   / / / /___  _____/ /_(_)___  ____ _
+  |   / __ \/ / / /   / __ \/ / / /  / /_/ / __ \/ ___/ __/ / __ \/ __ `/
+ /   / /_/ / /_/ /   / /_/ / /_/ /  / __  / /_/ (__  ) /_/ / / / / /_/ / 
+/_/|_\____/\__,_/_/|_\____/\__,_/  /_/ /_/\____/____/\__/_/_/ /_/\__, /  
+                                                                /____/   
+EOF
+    set -e
+    export PATH=$PATH:/home/container/.local/bin:/home/container
+    export LD_LIBRARY_PATH=/usr/lib/x86_64-linux-gnu:$LD_LIBRARY_PATH:/home/container/.apt/usr/lib/x86_64-linux-gnu:/home/container/.apt/usr/lib:/home/container/.apt/lib/x86_64-linux-gnu:/home/container/.apt/lib
+    
+    if [[ -d .git ]] && [[ "{{AUTO_UPDATE}}" == "1" ]]; then
+        echo "[GIT] Mise a jour du depot..."
+        git pull || echo "[WARN] [GIT] Echec du git pull."
+    fi
+    
+    if [[ "{{PIP_UPDATE}}" == "1" ]]; then
+        if [[ ! -z "{{PY_PACKAGES}}" ]]; then
+            echo "[PIP] Installation des packages supplementaires..."
+            pip install -U --prefix .local {{PY_PACKAGES}}
+        fi
+        if [[ -f "/home/container/${REQUIREMENTS_FILE}" ]]; then
+            echo "[PIP] Installation des dependances depuis ${REQUIREMENTS_FILE}..."
+            pip install -U --prefix .local -r "${REQUIREMENTS_FILE}"
+        fi
+    fi
+    
+    echo "[INFO] Demarrage de l'application Python ({{PY_FILE}})..."
+    exec /usr/local/bin/python "/home/container/{{PY_FILE}}"
+config:
+  files: {}
+  startup:
+    done: 'has connected to Gateway'
+  logs: {}
+  stop: ^C
+scripts:
+  installation:
+    script: |-
+      #!/bin/bash
+      # Script d'installation d'application Python optimisé v5 (Pelican Native)
+      set -e
+
+      echo "[INSTALL] Mise a jour des paquets de base de l'image de build..."
+      apt update -q
+      apt install -y -q git curl jq file unzip make gcc g++ libtool tar xz-utils
+
+      mkdir -p /mnt/server
+      cd /mnt/server
+
+      # --- 0. Installation FFmpeg (Build Statique) ---
+      if [ "${INSTALL_FFMPEG}" == "1" ] || [ "${INSTALL_FFMPEG}" == "true" ]; then
+          echo "[FFMPEG] Installation de FFmpeg (Build Statique)..."
+          if [ ! -f "./ffmpeg" ] || [ ! -s "./ffmpeg" ]; then
+              curl -sL https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz -o ffmpeg.tar.xz
+              tar -xf ffmpeg.tar.xz --wildcards --strip-components=1 '*/ffmpeg' '*/ffprobe'
+              rm -f ffmpeg.tar.xz
+              chmod +x ffmpeg ffprobe
+              echo "[INFO] FFmpeg et FFprobe installes avec succes dans /mnt/server."
+          else
+              echo "[INFO] FFmpeg est deja present."
+          fi
+      fi
+
+      # --- 1. Mode Upload Manuel ---
+      if [ "${USER_UPLOAD}" == "true" ] || [ "${USER_UPLOAD}" == "1" ]; then
+          echo "[INFO] Mode User Upload active. L'etape de clonage Git est meprisee."
+          echo "[INFO] Deposez vos fichiers par SFTP. Les dependances seront installees au boot."
+          exit 0
+      fi
+
+      # --- 2. Validation & Formatage de l'URL Git ---
+      if [ -z "${GIT_ADDRESS}" ]; then
+          echo "[WARN] Aucune adresse Git fournie. Mode manuel assume."
+          exit 0
+      fi
+
+      if [[ ${GIT_ADDRESS} != *.git ]]; then
+          GIT_ADDRESS="${GIT_ADDRESS}.git"
+      fi
+
+      if [ -z "${USERNAME}" ] && [ -z "${ACCESS_TOKEN}" ]; then
+          echo "[INFO] Utilisation d'un depot public (acces anonyme)."
+      else
+          echo "[INFO] Utilisation des identifiants Git fournis."
+          CLEAN_URL=$(echo "${GIT_ADDRESS}" | sed -E 's#^https?://##')
+          GIT_ADDRESS="https://${USERNAME}:${ACCESS_TOKEN}@${CLEAN_URL}"
+      fi
+
+      # --- 3. Gestion Répertoire / Clonage / Synchro ---
+      if [ -d .git ]; then
+          echo "[GIT] Dossier .git detecte. Mise a jour des sources..."
+          git pull || echo "[WARN] Echec du pull Git lors de l'installation."
+      else
+          if [ -z "$(ls -A /mnt/server)" ]; then
+              echo "[GIT] Repertoire vide. Clonage du depot..."
+              if [ -n "${BRANCH}" ]; then
+                  git clone --single-branch --branch "${BRANCH}" "${GIT_ADDRESS}" .
+              else
+                  git clone "${GIT_ADDRESS}" .
+              fi
+          else
+              echo "[WARN] Fichiers existants detectes sans sous-dossier .git."
+              echo "[INFO] Initialisation et liaison de securite avec le depot distant..."
+              git init
+              git remote add origin "${GIT_ADDRESS}"
+              git fetch origin
+              TARGET_BRANCH="${BRANCH:-main}"
+              git reset --mixed "origin/${TARGET_BRANCH}" || git reset --mixed "origin/master" || true
+              echo "[INFO] Synchronisation Git meprisee sans perte de fichiers."
+          fi
+      fi
+
+      # --- 4. Paquets Système Autonomes (APT Extraction) ---
+      if [ -n "${SYSTEM_PACKAGES}" ]; then
+          echo "[APT] Extraction des paquets systeme supplementaires : ${SYSTEM_PACKAGES}"
+          mkdir -p /mnt/server/.apt
+          cd /mnt/server/.apt
+          rm -f *.deb
+          
+          for pkg in ${SYSTEM_PACKAGES}; do
+              echo "  -> Telechargement et extraction de $pkg..."
+              apt-get download -q "$pkg" || echo "[WARN] Impossible de telecharger $pkg"
+          done
+          
+          if ls *.deb 1> /dev/null 2>&1; then
+              for deb in *.deb; do
+                  dpkg -x "$deb" .
+              done
+              rm -f *.deb
+              echo "[INFO] Paquets systeme extraits dans /mnt/server/.apt/"
+          fi
+          cd /mnt/server
+      fi
+
+      echo "[INFO] Installation terminee avec succes."
+      exit 0
+    container: 'python:3.11-slim-bookworm'
+    entrypoint: bash
+variables:
+  - sort: 1
+    name: 'Adresse du dépôt Git'
+    description: "URL HTTPS du dépôt Git à cloner (ex: https://github.com/user/repo)."
+    env_variable: GIT_ADDRESS
+    default_value: ''
+    user_viewable: true
+    user_editable: true
+    rules:
+      - nullable
+      - string
+  - sort: 2
+    name: 'Branche Git'
+    description: 'Branche spécifique à cloner (laisser vide pour la branche par défaut).'
+    env_variable: BRANCH
+    default_value: ''
+    user_viewable: true
+    user_editable: true
+    rules:
+      - nullable
+      - string
+  - sort: 3
+    name: "Fichiers téléchargés par l'utilisateur"
+    description: "Activer (1) pour désactiver le clonage Git et gérer vos fichiers via SFTP."
+    env_variable: USER_UPLOAD
+    default_value: '0'
+    user_viewable: true
+    user_editable: true
+    rules:
+      - required
+      - boolean
+  - sort: 4
+    name: 'Mise à jour automatique Git'
+    description: 'Exécuter "git pull" à chaque démarrage du serveur (1 = OUI, 0 = NON).'
+    env_variable: AUTO_UPDATE
+    default_value: '0'
+    user_viewable: true
+    user_editable: true
+    rules:
+      - required
+      - boolean
+  - sort: 5
+    name: 'Mise à jour PIP au démarrage'
+    description: "Installer/mettre à jour les dépendances pip au démarrage du serveur (1 = OUI, 0 = NON)."
+    env_variable: PIP_UPDATE
+    default_value: '1'
+    user_viewable: true
+    user_editable: true
+    rules:
+      - required
+      - boolean
+  - sort: 6
+    name: 'Fichier Python principal'
+    description: "Fichier d'entrée de votre application (ex: main.py, bot.py, app.py)."
+    env_variable: PY_FILE
+    default_value: main.py
+    user_viewable: true
+    user_editable: true
+    rules:
+      - required
+      - string
+  - sort: 7
+    name: 'Packages Python supplémentaires'
+    description: 'Liste de modules pip à installer au démarrage (séparés par un espace).'
+    env_variable: PY_PACKAGES
+    default_value: ''
+    user_viewable: true
+    user_editable: true
+    rules:
+      - nullable
+      - string
+  - sort: 8
+    name: "Nom d'utilisateur Git"
+    description: "Identifiant Git pour l'accès aux dépôts privés."
+    env_variable: USERNAME
+    default_value: ''
+    user_viewable: true
+    user_editable: true
+    rules:
+      - nullable
+      - string
+  - sort: 9
+    name: "Jeton d'accès Git (PAT)"
+    description: 'Personal Access Token (PAT) pour l''accès aux dépôts privés.'
+    env_variable: ACCESS_TOKEN
+    default_value: ''
+    user_viewable: true
+    user_editable: true
+    rules:
+      - nullable
+      - string
+  - sort: 10
+    name: 'Fichier de dépendances (Requirements)'
+    description: 'Nom du fichier contenant les dépendances pip (par défaut: requirements.txt).'
+    env_variable: REQUIREMENTS_FILE
+    default_value: requirements.txt
+    user_viewable: true
+    user_editable: true
+    rules:
+      - required
+      - string
+  - sort: 11
+    name: 'Installer FFmpeg'
+    description: 'Activer (1) pour télécharger et intégrer la version statique de FFmpeg.'
+    env_variable: INSTALL_FFMPEG
+    default_value: '0'
+    user_viewable: true
+    user_editable: true
+    rules:
+      - required
+      - boolean
+  - sort: 12
+    name: 'Packages Système supplémentaires (APT)'
+    description: '(Expert) Noms des paquets deb à extraire dans /mnt/server/.apt/.'
+    env_variable: SYSTEM_PACKAGES
+    default_value: ''
+    user_viewable: true
+    user_editable: true
+    rules:
+      - nullable
+      - string

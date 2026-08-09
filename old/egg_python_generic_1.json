@@ -1,13 +1,13 @@
 {
-    "_comment": "DO NOT EDIT: FILE GENERATED AUTOMATICALLY BY PTERODACTYL PANEL - PTERODACTYL.IO",
+    "_comment": "DO NOT EDIT: FILE GENERATED AUTOMATICALLY BY PELICAN PANEL - PELICAN.DEV",
     "meta": {
         "version": "PTDL_v2",
         "update_url": null
     },
-    "exported_at": "2025-12-13T17:56:06+01:00",
-    "name": "python generique",
-    "author": "unknown@unknown.com",
-    "description": "Un egg Python generique pour Pterodactyl\r\n\r\nTest\u00e9 avec : https:\/\/github.com\/Ispira\/pixel-bot",
+    "exported_at": "2025-05-10T14:30:00+02:00",
+    "name": "Python Générique",
+    "author": "xougui.7@gmail.com",
+    "description": "Un egg Python générique optimisé et sécurisé pour Pelican Panel.\r\n\r\nSupporte Git, requirements.txt et gestion intelligente des dépendances.",
     "features": null,
     "docker_images": {
         "Python 3.12": "ghcr.io\/parkervcp\/yolks:python_3.12",
