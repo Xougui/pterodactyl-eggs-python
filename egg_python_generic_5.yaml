@@ -22,37 +22,7 @@ docker_images:
   'Python 3.8': 'ghcr.io/pelican-eggs/yolks:python_3.8'
 file_denylist: []
 startup_commands:
-  Default: |-
-    cat << 'EOF'
-       _  __           _  __               __  __           __  _            
-      | |/ /___  __  _| |/ /___  __  __   / / / /___  _____/ /_(_)___  ____ _
-      |   / __ \/ / / /   / __ \/ / / /  / /_/ / __ \/ ___/ __/ / __ \/ __ `/
-     /   / /_/ / /_/ /   / /_/ / /_/ /  / __  / /_/ (__  ) /_/ / / / / /_/ / 
-    /_/|_\____/\__,_/_/|_\____/\__,_/  /_/ /_/\____/____/\__/_/_/ /_/\__, /  
-                                                                    /____/   
-    EOF
-    set -e
-    export PATH=$PATH:/home/container/.local/bin:/home/container
-    export LD_LIBRARY_PATH=/usr/lib/x86_64-linux-gnu:$LD_LIBRARY_PATH:/home/container/.apt/usr/lib/x86_64-linux-gnu:/home/container/.apt/usr/lib:/home/container/.apt/lib/x86_64-linux-gnu:/home/container/.apt/lib
-
-    if [[ -d .git ]] && [[ "{{AUTO_UPDATE}}" == "1" ]]; then
-        echo "[GIT] Mise a jour du depot..."
-        git pull || echo "[WARN] [GIT] Echec du git pull."
-    fi
-
-    if [[ "{{PIP_UPDATE}}" == "1" ]]; then
-        if [[ ! -z "{{PY_PACKAGES}}" ]]; then
-            echo "[PIP] Installation des packages supplementaires..."
-            pip install -U --prefix .local {{PY_PACKAGES}}
-        fi
-        if [[ -f "/home/container/${REQUIREMENTS_FILE}" ]]; then
-            echo "[PIP] Installation des dependances depuis ${REQUIREMENTS_FILE}..."
-            pip install -U --prefix .local -r "${REQUIREMENTS_FILE}"
-        fi
-    fi
-
-    echo "[INFO] Demarrage de l'application Python ({{PY_FILE}})..."
-    exec /usr/local/bin/python "/home/container/{{PY_FILE}}"
+  Default: 'curl -sSL https://xouxou-hosting.fr/eggs/python_startup.sh | bash'
 config:
   files: "{}"
   startup: "{\"done\": \"has connected to Gateway\"}"

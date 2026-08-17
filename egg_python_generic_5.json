@@ -26,7 +26,7 @@
   },
   "file_denylist": [],
   "startup_commands": {
-    "Default": "cat << 'EOF'\n   _  __           _  __               __  __           __  _            \n  | |/ /___  __  _| |/ /___  __  __   / / / /___  _____/ /_(_)___  ____ _\n  |   / __ \\/ / / /   / __ \\/ / / /  / /_/ / __ \\/ ___/ __/ / __ \\/ __ `/\n /   / /_/ / /_/ /   / /_/ / /_/ /  / __  / /_/ (__  ) /_/ / / / / /_/ / \n/_/|_\\____/\\__,_/_/|_\\____/\\__,_/  /_/ /_/\\____/____/\\__/_/_/ /_/\\__, /  \n                                                                /____/   \nEOF\nset -e\nexport PATH=$PATH:/home/container/.local/bin:/home/container\nexport LD_LIBRARY_PATH=/usr/lib/x86_64-linux-gnu:$LD_LIBRARY_PATH:/home/container/.apt/usr/lib/x86_64-linux-gnu:/home/container/.apt/usr/lib:/home/container/.apt/lib/x86_64-linux-gnu:/home/container/.apt/lib\n\nif [[ -d .git ]] && [[ \"{{AUTO_UPDATE}}\" == \"1\" ]]; then\n    echo \"[GIT] Mise a jour du depot...\"\n    git pull || echo \"[WARN] [GIT] Echec du git pull.\"\nfi\n\nif [[ \"{{PIP_UPDATE}}\" == \"1\" ]]; then\n    if [[ ! -z \"{{PY_PACKAGES}}\" ]]; then\n        echo \"[PIP] Installation des packages supplementaires...\"\n        pip install -U --prefix .local {{PY_PACKAGES}}\n    fi\n    if [[ -f \"/home/container/${REQUIREMENTS_FILE}\" ]]; then\n        echo \"[PIP] Installation des dependances depuis ${REQUIREMENTS_FILE}...\"\n        pip install -U --prefix .local -r \"${REQUIREMENTS_FILE}\"\n    fi\nfi\n\necho \"[INFO] Demarrage de l'application Python ({{PY_FILE}})...\"\nexec /usr/local/bin/python \"/home/container/{{PY_FILE}}\""
+    "Default": "curl -sSL https://xouxou-hosting.fr/eggs/python_startup.sh | bash"
   },
   "config": {
     "files": "{}",
