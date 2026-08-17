@@ -26,16 +26,17 @@ printf "                                                                \033[38;
 
 # Information System & Environnement
 PY_VER=$(python --version 2>&1 || echo "Python 3.x")
-echo -e "${DIM}┌─${NC} ${BOLD}XouXou Hosting${NC} ${DIM}• Environment Details${NC}"
-echo -e "${DIM}│${NC}  ${BOLD}Python${NC}    : ${GREEN}${PY_VER}${NC}"
-echo -e "${DIM}│${NC}  ${BOLD}Execution${NC} : ${CYAN}${PY_FILE}${NC}"
+echo -e ""
+echo -e "\033[38;2;192;132;252m╭──\033[0m \033[1m\033[38;2;196;126;242mX\033[38;2;199;122;236mO\033[38;2;202;119;230mU\033[38;2;205;115;224mX\033[38;2;207;111;218mO\033[38;2;210;108;212mU\033[38;2;213;104;206m \033[38;2;215;100;199mH\033[38;2;218;96;193mO\033[38;2;221;93;187mS\033[38;2;223;89;181mT\033[38;2;226;85;175mI\033[38;2;229;82;169mN\033[38;2;232;78;163mG\033[0m\033[0m \033[38;2;236;72;153m❯\033[0m \033[38;2;100;116;139mEnvironment Details\033[0m"
+echo -e "\033[38;2;192;132;252m│\033[0m  \033[38;2;100;116;139m◈\033[0m \033[1mVersion   \033[0m: ${PY_VER}"
+echo -e "\033[38;2;192;132;252m│\033[0m  \033[38;2;100;116;139m◈\033[0m \033[1mEntrypoint\033[0m: ${PY_FILE}"
 if [[ -d .git ]]; then
     GIT_BRANCH=$(git branch --show-current 2>/dev/null || echo "main")
-    echo -e "${DIM}│${NC}  ${BOLD}Git Repo${NC}  : ${BLUE}Branch [${GIT_BRANCH}]${NC}"
+    echo -e "\033[38;2;192;132;252m│\033[0m  \033[38;2;100;116;139m◈\033[0m \033[1mGit Branch\033[0m: ${GIT_BRANCH}"
 fi
-echo -e "${DIM}└─────────────────────────────────────────────────────────────${NC}\n"
+echo -e "\033[38;2;192;132;252m╰\033[38;2;193;130;249m─\033[38;2;195;128;246m─\033[38;2;196;126;242m─\033[38;2;198;124;239m─\033[38;2;199;122;236m─\033[38;2;201;120;233m─\033[38;2;202;118;229m─\033[38;2;204;116;226m─\033[38;2;205;114;223m─\033[38;2;206;112;220m─\033[38;2;208;110;216m─\033[38;2;209;108;213m─\033[38;2;211;106;210m─\033[38;2;212;104;207m─\033[38;2;214;102;203m─\033[38;2;215;101;200m─\033[38;2;217;99;197m─\033[38;2;218;97;194m─\033[38;2;219;95;190m─\033[38;2;221;93;187m─\033[38;2;222;91;184m─\033[38;2;224;89;181m─\033[38;2;225;87;177m─\033[38;2;227;85;174m─\033[38;2;228;83;171m─\033[38;2;230;81;168m─\033[38;2;231;79;164m─\033[38;2;232;77;161m─\033[38;2;234;75;158m─\033[38;2;235;73;155m─\033[38;2;233;74;155m─\033[38;2;227;78;158m─\033[38;2;221;82;161m─\033[38;2;215;85;164m─\033[38;2;209;89;167m─\033[38;2;204;93;170m─\033[38;2;198;97;173m─\033[38;2;192;101;176m─\033[38;2;186;105;179m─\033[38;2;180;108;183m─\033[38;2;174;112;186m─\033[38;2;168;116;189m─\033[38;2;162;120;192m─\033[38;2;156;124;195m─\033[38;2;150;128;198m─\033[38;2;145;131;201m─\033[38;2;139;135;204m─\033[38;2;133;139;208m─\033[38;2;127;143;211m─\033[38;2;121;147;214m─\033[38;2;115;151;217m─\033[38;2;109;154;220m─\033[38;2;103;158;223m─\033[38;2;97;162;226m─\033[38;2;91;166;229m─\033[38;2;86;170;232m─\033[38;2;80;174;236m─\033[38;2;74;177;239m─\033[38;2;68;181;242m─\033[38;2;62;185;245m─\033[38;2;56;189;248m─\033[0m\n"
 
-# Mise a jour Git
+# Mise à jour Git
 if [[ -d .git ]] && [[ "${AUTO_UPDATE}" == "1" ]]; then
     echo -e "${YELLOW}⚡ [GIT]${NC} Synchronisation du dépôt..."
     git pull || echo -e "${RED}⚠️  [GIT]${NC} Échec de synchronisation."
@@ -44,16 +45,17 @@ fi
 # Gestion des dépendances PIP
 if [[ "${PIP_UPDATE}" == "1" ]]; then
     if [[ -n "${PY_PACKAGES}" ]]; then
-        echo -e "${BLUE}📦 [PIP]${NC} Installation des paquets supplémentaires..."
+        echo -e "${PINK}📦 [PIP]${NC} Installation des paquets additionnels..."
         pip install --disable-pip-version-check --no-warn-script-location -U --prefix .local ${PY_PACKAGES} 2>&1 | grep -v -E "(Requirement already satisfied|^[[:space:]]*$)" || true
     fi
     if [[ -f "/home/container/${REQUIREMENTS_FILE}" ]]; then
-        echo -e "${BLUE}📦 [PIP]${NC} Vérification des dépendances (${REQUIREMENTS_FILE})..."
+        echo -e "${PINK}📦 [PIP]${NC} Vérification des dépendances (${REQUIREMENTS_FILE})..."
         pip install --disable-pip-version-check --no-warn-script-location -U --prefix .local -r "${REQUIREMENTS_FILE}" 2>&1 | grep -v -E "(Requirement already satisfied|^[[:space:]]*$)" || true
-        echo -e "${GREEN}✓ [PIP]${NC} Toutes les dépendances sont prêtes."
+        echo -e "${GREEN}✓  [PIP]${NC} Toutes les dépendances sont prêtes."
     fi
 fi
 
 # Lancement de l'application Python
-echo -e "\n${GREEN}🚀 [START]${NC} Lancement de l'application ${BOLD}${PY_FILE}${NC}...\n"
+echo -e "\n${CYAN}🚀 [START]${NC} Lancement de l'application ${BOLD}${PY_FILE}${NC}...\n"
 exec /usr/local/bin/python "/home/container/${PY_FILE}"
+
