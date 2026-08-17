@@ -1,4 +1,4 @@
-# Egg Pelican Panel - Python Générique v4
+# Egg Pelican Panel - Python Générique v5
 
 Cet egg Pelican Panel permet d'héberger des applications Python génériques de manière flexible et sécurisée. Il est conçu pour supporter un large éventail de projets, du simple script au bot Discord complexe.
 
@@ -9,6 +9,8 @@ Cet egg Pelican Panel permet d'héberger des applications Python génériques de
 - [Configuration](#configuration)
   - [Variables du Serveur](#variables-du-serveur)
 - [Installation](#installation)
+  - [Méthode 1 : Via l'interface web](#méthode-1--via-linterface-web)
+  - [Méthode 2 : En ligne de commande (CLI Artisan Tinker)](#méthode-2--en-ligne-de-commande-cli-artisan-tinker)
 - [Sécurité](#sécurité)
   - [Jeton d'accès Git](#jeton-daccès-git)
   - [Accès SFTP](#accès-sftp)
@@ -17,7 +19,8 @@ Cet egg Pelican Panel permet d'héberger des applications Python génériques de
 
 ## Caractéristiques
 
-*   **Support Multi-versions :** Compatible avec Python 3.8 à 3.14 via des images Docker optimisées.
+*   **Démarrage ultra-rapide & épuré :** Script de démarrage optimisé avec filtrage intelligent des logs pip et bannière soignée.
+*   **Support Multi-versions :** Compatible avec Python 3.8 à 3.14 via les images Docker de `ghcr.io/pelican-eggs/yolks`.
 *   **Intégration Git :**
     *   Clonage de dépôts publics ou privés (via Token d'accès personnel).
     *   Sélection de la branche à utiliser.
@@ -67,10 +70,38 @@ Voici les variables disponibles pour configurer votre serveur :
 
 ## Installation
 
-1. Téléchargez le fichier [`egg_python_generic_4.yaml`](egg_python_generic_4.yaml) (au format natif Pelican Panel `PLCN_v3`) ou la version JSON [`egg_python_generic_4.json`](egg_python_generic_4.json).
+### Méthode 1 : Via l'interface web
+1. Téléchargez le fichier [`egg_python_generic_5.yaml`](egg_python_generic_5.yaml) (au format natif Pelican Panel `PLCN_v3`) ou la version JSON [`egg_python_generic_5.json`](egg_python_generic_5.json).
 2. Dans votre panel Pelican, allez dans l'administration des Eggs puis **Import Egg**.
 3. Sélectionnez le fichier YAML/JSON et le Nest approprié.
-4. Créez un nouveau serveur en utilisant cet egg.
+
+---
+
+### Méthode 2 : En ligne de commande (CLI Artisan Tinker)
+Idéal pour importer ou mettre à jour directement l'egg en SSH sur le serveur hôte :
+
+1. Déposez le contenu du fichier YAML dans `/tmp/egg.yaml` :
+   ```bash
+   nano /tmp/egg.yaml
+   ```
+2. Exécutez la commande d'importation Pelican :
+   ```bash
+   php /var/www/pelican/artisan tinker --execute="
+   try {
+       \$content = file_get_contents('/tmp/egg.yaml');
+       \$format = defined('App\Enums\EggFormat::YAML') ? App\Enums\EggFormat::YAML : App\Enums\EggFormat::Yaml;
+       \$egg = app(App\Services\Eggs\Sharing\EggImporterService::class)->fromContent(\$content, \$format);
+       echo 'Egg YAML importé avec succès : ' . \$egg->name . ' (ID: ' . \$egg->id . ')' . PHP_EOL;
+   } catch (\Throwable \$e) {
+       echo 'Erreur : ' . \$e->getMessage() . PHP_EOL;
+       echo 'Trace : ' . \$e->getFile() . ':' . \$e->getLine() . PHP_EOL;
+   }
+   "
+   ```
+3. Supprimez le fichier temporaire :
+   ```bash
+   rm -f /tmp/egg.yaml
+   ```
 
 ## Sécurité
 
