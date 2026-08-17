@@ -22,5 +22,11 @@
 
 4. **Déploiement et Synchronisation Web :**
    - Les scripts de démarrage distants sont hébergés sur `https://xouxou-hosting.fr/eggs/<script>.sh`.
-   - Après toute modification dans le projet `eggs`, synchroniser automatiquement le fichier dans `C:\Users\xougu\Desktop\xouxou_hosting\eggs/` (qui correspond à `/var/www/html/xouxou_hosting/eggs/` sur le serveur).
+   - **Synchronisation automatique obligatoire** : Après toute modification d'un script ou asset dans le projet `eggs`, synchroniser immédiatement le fichier correspondant dans `C:\Users\xougu\Desktop\xouxou_hosting\eggs/` sans attendre que l'utilisateur le demande.
    - Lors des vérifications en ligne, utiliser un User-Agent valide (`curl/8.x`) pour valider la concordance du contenu et du hash.
+
+5. **Intégrité de la bannière et Design du Terminal :**
+   - Toujours conserver l'ASCII art d'origine de la marque (ne pas le régénérer ou le changer de police).
+   - **Échappement des caractères shell** : Dans les scripts bash (`.sh`), toujours échapper les caractères spéciaux shell présents dans l'ASCII art (ex: backticks \` et dollars \$) lorsqu'ils sont inclus dans des chaînes entre guillemets doubles.
+   - Structurer l'affichage avec un cartouche d'environnement (`┌─ XouXou Hosting ... └─`), des couleurs ANSI modernes et des icônes d'étapes (`⚡`, `📦`, `✓`, `🚀`).
+
